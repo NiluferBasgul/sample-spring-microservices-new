@@ -1,7 +1,7 @@
 FROM openjdk:21-jdk-slim
-ENV APP_FILE config-service-1.1-SNAPSHOT.jar
+ENV APP_FILE department-service-1.2-SNAPSHOT.jar
 ENV APP_HOME /app
-EXPOSE 8061
+EXPOSE 8080
 COPY target/$APP_FILE $APP_HOME/
 WORKDIR $APP_HOME
 ENTRYPOINT ["sh", "-c"]
