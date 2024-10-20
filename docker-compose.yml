@@ -43,7 +43,6 @@ services:
       - zipkin
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_SLEUTH_ENABLED: false  # Disable Spring Sleuth (tracing)
 
   organization-service:
     image: niluferb/organization-service:1.2-SNAPSHOT
@@ -71,3 +70,25 @@ services:
       - zipkin
     environment:
       SPRING_PROFILES_ACTIVE: docker
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    networks:
+      - my-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.0
+    ports:
+      - "5601:5601"
+    networks:
+      - my-network
+    depends_on:
+      - elasticsearch
+
+networks:
+  my-network:
+    driver: bridge
