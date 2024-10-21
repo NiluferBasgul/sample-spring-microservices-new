@@ -3,73 +3,62 @@ services:
   zipkin:
     container_name: zipkin
     image: openzipkin/zipkin
-    extra_hosts: [ 'host.docker.internal:host-gateway' ]
     ports:
       - "9411:9411"
+    networks:
+      - my-network
 
   config-service:
     image: niluferb/config-service:1.1-SNAPSHOT
     ports:
       - "8088:8088"
+    networks:
+      - my-network
 
   discovery-service:
     image: niluferb/discovery-service:1.1-SNAPSHOT
     ports:
       - "8061:8061"
-    links:
-      - config-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - my-network
 
   employee-service:
     image: niluferb/employee-service:1.2-SNAPSHOT
     ports:
-      - "8080"
-    links:
-      - config-service
-      - discovery-service
-      - zipkin
+      - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - my-network
 
   department-service:
     image: niluferb/department-service:1.2-SNAPSHOT
     ports:
-      - "8080"
-    links:
-      - config-service
-      - discovery-service
-      - employee-service
-      - zipkin
+      - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - my-network
 
   organization-service:
     image: niluferb/organization-service:1.2-SNAPSHOT
     ports:
-      - "8080"
-    links:
-      - config-service
-      - discovery-service
-      - employee-service
-      - department-service
-      - zipkin
+      - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - my-network
 
   gateway-service:
     image: niluferb/gateway-service:1.1-SNAPSHOT
     ports:
       - "8060:8060"
-    links:
-      - config-service
-      - discovery-service
-      - employee-service
-      - department-service
-      - organization-service
-      - zipkin
     environment:
       SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - my-network
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
@@ -84,10 +73,10 @@ services:
     image: docker.elastic.co/kibana/kibana:7.17.0
     ports:
       - "5601:5601"
-    networks:
-      - my-network
     depends_on:
       - elasticsearch
+    networks:
+      - my-network
 
 networks:
   my-network:
